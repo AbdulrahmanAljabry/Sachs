@@ -72,6 +72,8 @@ button:active {
   overflow: hidden;
   box-shadow: 0 0 20px #000;
   transition: transform 0.3s, box-shadow 0.3s;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .result.show {
@@ -129,7 +131,7 @@ footer a:hover {
 
 <h1>دورات ساكس السعرية</h1>
 
-<p>اضغط على الزر لحساب الدورات الرئيسية بناءً على الرقم الصفري 1800:</p>
+<p>اضغط على الزر لحساب 200 دورة سعرية متتالية:</p>
 <button onclick="playClick(); calculate()">احسب الدورات</button>
 <button onclick="playClick(); saveResults()">حفظ النتائج كملف TXT</button>
 
@@ -151,15 +153,11 @@ function playClick() {
 
 function calculate() {
   const base = 1800; // الرقم الصفري
-  const cycles = [];
+  const cycles = [base];
 
-  // أول دورة: الرقم الأساسي
-  cycles.push(base);
-
-  // نحسب 5 دورات إضافية باستخدام المعادلة (√n + 2)^2
   let current = base;
-  for (let i = 0; i < 5; i++) {
-    current = Math.round(Math.pow(Math.sqrt(current) + 2, 2)); // تجاهل الأعشار
+  for (let i = 1; i < 200; i++) {
+    current = Math.round(Math.pow(Math.sqrt(current) + 2, 2)); // المعادلة + تجاهل الأعشار
     cycles.push(current);
   }
 
@@ -191,7 +189,7 @@ function saveResults() {
   const blob = new Blob([lastResults], {type: "text/plain;charset=utf-8"});
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "sachs_cycles.txt";
+  link.download = "sachs_cycles_200.txt";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
