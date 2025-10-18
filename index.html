@@ -172,29 +172,26 @@ function calculate() {
   lastResults = cycles.join("\n");
 }
 
-// عند الضغط على أي دورة، إظهار الدورات الفرعية ±0.25, ±0.5 ... ±2
+// عند الضغط على أي دورة، إخفاء الرئيسية وعرض الدورات الفرعية فقط بدون ±
 function showSubCycles(n) {
   const deltas = [0.25,0.5,0.75,1,1.25,1.5,1.75,2];
   const colors = ["green","red","blue","black","green","red","blue","black"];
   let html = `<div class='result show'><strong>الدورات حول ${n}:</strong><br>`;
 
-  // الموجب
   deltas.forEach((d,i) => {
-    let val = Math.round(Math.pow(Math.sqrt(n)+d, 2));
-    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${val}')">${val}</span> &nbsp; (+${d})<br>`;
+    let valPlus = Math.round(Math.pow(Math.sqrt(n)+d, 2));
+    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valPlus}')">${valPlus}</span><br>`;
   });
 
-  // السالب
   deltas.forEach((d,i) => {
-    let val = Math.round(Math.pow(Math.sqrt(n)-d, 2));
-    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${val}')">${val}</span> &nbsp; (-${d})<br>`;
+    let valMinus = Math.round(Math.pow(Math.sqrt(n)-d, 2));
+    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valMinus}')">${valMinus}</span><br>`;
   });
 
   html += "</div>";
 
-  // عرض أسفل الدورات الرئيسية
-  const outputDiv = document.getElementById('output');
-  outputDiv.insertAdjacentHTML('beforeend', html);
+  // استبدال الدورات الرئيسية بالفرعية مباشرة
+  document.getElementById('output').innerHTML = html;
 }
 
 function copyValue(val) {
