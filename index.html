@@ -152,27 +152,49 @@ function playClick() {
 }
 
 function calculate() {
-  const base = 1800; // الرقم الصفري
+  const base = 1800;
   const cycles = [base];
-
   let current = base;
+
   for (let i = 1; i < 200; i++) {
-    current = Math.round(Math.pow(Math.sqrt(current) + 2, 2)); // المعادلة + تجاهل الأعشار
+    current = Math.round(Math.pow(Math.sqrt(current) + 2, 2));
     cycles.push(current);
   }
 
   const colors = ["green","red","blue","black","green","red"];
-
   let resultHTML = `<div class='result show'><strong>الدورات الرئيسية:</strong><br>`;
   cycles.forEach((val, i) => {
-    resultHTML += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${val}')">${val}</span><br>`;
+    resultHTML += `<span class='value ${colors[i % colors.length]}' onclick="showSubCycles(${val})">${val}</span><br>`;
   });
   resultHTML += "</div>";
 
   document.getElementById('output').innerHTML = resultHTML;
-
-  // خزن النتائج للحفظ
   lastResults = cycles.join("\n");
+}
+
+// عند الضغط على أي دورة، إظهار الدورات الفرعية ±0.25, ±0.5 ... ±2
+function showSubCycles(n) {
+  const deltas = [0.25,0.5,0.75,1,1.25,1.5,1.75,2];
+  const colors = ["green","red","blue","black","green","red","blue","black"];
+  let html = `<div class='result show'><strong>الدورات حول ${n}:</strong><br>`;
+
+  // الموجب
+  deltas.forEach((d,i) => {
+    let val = Math.round(Math.pow(Math.sqrt(n)+d, 2));
+    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${val}')">${val}</span> &nbsp; (+${d})<br>`;
+  });
+
+  // السالب
+  deltas.forEach((d,i) => {
+    let val = Math.round(Math.pow(Math.sqrt(n)-d, 2));
+    html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${val}')">${val}</span> &nbsp; (-${d})<br>`;
+  });
+
+  html += "</div>";
+
+  // عرض أسفل الدورات الرئيسية
+  const outputDiv = document.getElementById('output');
+  outputDiv.insertAdjacentHTML('beforeend', html);
 }
 
 function copyValue(val) {
