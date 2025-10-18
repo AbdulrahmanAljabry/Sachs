@@ -37,10 +37,20 @@ h1 {
   text-shadow: 0 0 10px #ffdf00;
 }
 
-button {
+input[type=number] {
   font-size: 18px;
-  padding: 12px 20px;
-  margin: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  width: 180px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+button {
+  font-size: 16px;
+  padding: 10px 16px;
+  margin: 5px;
   border-radius: 8px;
   background-color: gold;
   border: none;
@@ -117,6 +127,8 @@ footer a:hover {
 .red { color: #B22222; background: rgba(178,34,34,0.1); }
 .blue { color: #00BFFF; background: rgba(0,191,255,0.1); }
 .black { color: #fff; background: rgba(0,0,0,0.2); }
+.subHeader { color: gold; font-weight: bold; margin-top: 10px; }
+.spacer { margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -131,9 +143,16 @@ footer a:hover {
 
 <h1>دورات ساكس السعرية</h1>
 
-<p>اضغط على الزر لحساب 200 دورة سعرية متتالية:</p>
-<button onclick="playClick(); calculate()">احسب الدورات</button>
-<button onclick="playClick(); saveResults()">حفظ النتائج كملف TXT</button>
+<!-- خيارات المستخدم -->
+<div>
+  <button onclick="playClick(); calculate()">احسب 200 دورة رئيسية</button>
+  <a href="https://abdulrahmanaljabry.github.io/morgan/" target="_blank">
+    <button onclick="playClick()">دورات مورجان</button>
+  </a>
+  <br><br>
+  <input type="number" id="customNumber" placeholder="اكتب رقمك">
+  <button onclick="playClick(); calculateCustom()">احسب دوراته الفرعية</button>
+</div>
 
 <div id="output"></div>
 
@@ -151,38 +170,38 @@ function playClick() {
   audio.play();
 }
 
+// الدورات الرئيسية (200 دورة)
 function calculate() {
   const base = 1800;
   const cycles = [base];
   let current = base;
-
   for (let i = 1; i < 200; i++) {
     current = Math.round(Math.pow(Math.sqrt(current) + 2, 2));
     cycles.push(current);
   }
-
   const colors = ["green","red","blue","black","green","red"];
-  let resultHTML = `<div class='result show'><strong>الدورات الرئيسية:</strong><br>`;
+  let html = `<div class='result show'><strong>الدورات الرئيسية:</strong><br>`;
   cycles.forEach((val, i) => {
-    resultHTML += `<span class='value ${colors[i % colors.length]}' onclick="showSubCycles(${val})">${val}</span><br>`;
+    html += `<span class='value ${colors[i % colors.length]}' onclick="showSubCycles(${val})">${val}</span><br>`;
   });
-  resultHTML += "</div>";
-
-  document.getElementById('output').innerHTML = resultHTML;
+  html += "</div>";
+  document.getElementById('output').innerHTML = html;
   lastResults = cycles.join("\n");
 }
 
-// عند الضغط على أي دورة، إخفاء الرئيسية وعرض الدورات الفرعية فقط بدون ±
+// الدورات الفرعية لأي رقم محدد (من المستخدم أو من الضغط على دورة رئيسية)
 function showSubCycles(n) {
   const deltas = [0.25,0.5,0.75,1,1.25,1.5,1.75,2];
   const colors = ["green","red","blue","black","green","red","blue","black"];
   let html = `<div class='result show'><strong>الدورات حول ${n}:</strong><br>`;
 
+  html += `<div class="subHeader">+ الدورات السعرية</div>`;
   deltas.forEach((d,i) => {
     let valPlus = Math.round(Math.pow(Math.sqrt(n)+d, 2));
     html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valPlus}')">${valPlus}</span><br>`;
   });
 
+  html += `<div class="spacer subHeader">- الدورات السعرية</div>`;
   deltas.forEach((d,i) => {
     let valMinus = Math.round(Math.pow(Math.sqrt(n)-d, 2));
     html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valMinus}')">${valMinus}</span><br>`;
@@ -190,14 +209,21 @@ function showSubCycles(n) {
 
   html += "</div>";
 
-  // استبدال الدورات الرئيسية بالفرعية مباشرة
   document.getElementById('output').innerHTML = html;
 }
 
+// حساب الدورات الفرعية من الرقم الذي يدخله المستخدم
+function calculateCustom() {
+  const num = parseFloat(document.getElementById('customNumber').value);
+  if (isNaN(num)) {
+    alert("يرجى إدخال رقم صحيح");
+    return;
+  }
+  showSubCycles(num);
+}
+
 function copyValue(val) {
-  navigator.clipboard.writeText(val).then(() => {
-    playClick();
-  });
+  navigator.clipboard.writeText(val).then(() => { playClick(); });
 }
 
 function saveResults() {
