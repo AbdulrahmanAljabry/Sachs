@@ -143,7 +143,6 @@ footer a:hover {
 
 <h1>دورات ساكس السعرية</h1>
 
-<!-- خيارات المستخدم -->
 <div>
   <button onclick="playClick(); calculate()">احسب 200 دورة رئيسية</button>
   <a href="https://abdulrahmanaljabry.github.io/morgan/" target="_blank">
@@ -170,13 +169,13 @@ function playClick() {
   audio.play();
 }
 
-// الدورات الرئيسية (200 دورة)
+// الدورات الرئيسية (200 دورة) مع حذف الأرقام العشرية
 function calculate() {
   const base = 1800;
   const cycles = [base];
   let current = base;
   for (let i = 1; i < 200; i++) {
-    current = Math.round(Math.pow(Math.sqrt(current) + 2, 2));
+    current = Math.floor(Math.pow(Math.sqrt(current) + 2, 2)); // حذف الجزء العشري
     cycles.push(current);
   }
   const colors = ["green","red","blue","black","green","red"];
@@ -189,7 +188,7 @@ function calculate() {
   lastResults = cycles.join("\n");
 }
 
-// الدورات الفرعية لأي رقم محدد (من المستخدم أو من الضغط على دورة رئيسية)
+// الدورات الفرعية لأي رقم
 function showSubCycles(n) {
   const deltas = [0.25,0.5,0.75,1,1.25,1.5,1.75,2];
   const colors = ["green","red","blue","black","green","red","blue","black"];
@@ -197,13 +196,13 @@ function showSubCycles(n) {
 
   html += `<div class="subHeader">+ الدورات السعرية</div>`;
   deltas.forEach((d,i) => {
-    let valPlus = Math.round(Math.pow(Math.sqrt(n)+d, 2));
+    let valPlus = Math.floor(Math.pow(Math.sqrt(n)+d, 2));
     html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valPlus}')">${valPlus}</span><br>`;
   });
 
   html += `<div class="spacer subHeader">- الدورات السعرية</div>`;
   deltas.forEach((d,i) => {
-    let valMinus = Math.round(Math.pow(Math.sqrt(n)-d, 2));
+    let valMinus = Math.floor(Math.pow(Math.sqrt(n)-d, 2));
     html += `<span class='value ${colors[i % colors.length]}' onclick="copyValue('${valMinus}')">${valMinus}</span><br>`;
   });
 
